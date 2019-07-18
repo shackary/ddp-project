@@ -1,0 +1,64 @@
+---
+title: "Course Project: Exploring Plot Colors"
+author: "Zachary Sharrow"
+date: "7/18/2019"
+output: slidy_presentation
+---
+
+```{r, include = F}
+library(ggplot2)
+```
+
+## Rationale  
+  
+In Exploratory Data Analysis, we learned about the importance of exploratory
+visualizations, and how one useful method is to plot variables of interest, then
+add color in order to investigate possible relationships. My app provides an
+interactive way to explore some aspects of R's built-in `state` data sets.
+
+## Implementation  
+  
+The server-side code plots the state data for high school graudation rate (X axis)
+against the per capita income (Y axis) for each state, then colors the points
+according to which additional variable the user selects from a drop-down menu. 
+  
+```{r, eval = F}
+data(state)
+states <- data.frame(state.x77)
+states$Region <- state.region
+states$Division <- state.division
+
+server <- function(input, output) {
+    output$finalPlot <- renderPlot({
+        finalPlot <- ggplot(states, aes(HS.Grad, Income, color = states[[input$select]])) +
+            xlab("High School Graduation Percentage") + ylab("Per Capita Income") +
+            ggtitle("US States, Educational Attainment vs. Income") + 
+            geom_point(size = 3) + labs(color = input$select)
+        finalPlot
+        
+    })
+}
+```
+  
+Advance to the next slide to see an example of the output, colored by the `Region` variable.  
+  
+## Example   
+  
+```{r, echo = F}
+data(state)
+states <- data.frame(state.x77)
+states$Region <- state.region
+states$Division <- state.division
+
+finalPlot <- ggplot(states, aes(HS.Grad, Income, color = states[["Region"]])) +
+    xlab("High School Graduation Percentage") + ylab("Per Capita Income") +
+    ggtitle("US States, Educational Attainment vs. Income") + 
+    geom_point(size = 3) + labs(color = "Region")
+finalPlot
+```
+   
+## More info  
+  
+See the project live on [shinyapps.io](https://shackary.shinyapps.io/ddp-week4/)  
+  
+View source code on [GitHub](https://github.com/shackary/ddp-project)
